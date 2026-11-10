@@ -1,0 +1,39 @@
+[project]
+name = "hse-data-analysis-homeworks"
+version = "0.1.0"
+description = "Домашние задания курса «Python для анализа данных» (ВШЭ, ИИ в маркетинге и управлении продуктом)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ipykernel>=7.4.0",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+    "openpyxl>=3.1.5",
+    "pandas>=3.1.1",
+    "pytest>=9.2.0",
+    "seaborn>=0.13.2",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.6"]
+extra = [
+    "plotly>=7.1.0",
+    "scipy>=1.18.1",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+# E501: длина строки 120 символов действует и на комментарии/докстринги, поэтому
+# явно включаем её - по умолчанию ruff проверяет line-length только в форматтере.
+extend-select = ["E501"]
+# PIE790: в шаблонах домашек "..." - намеренный плейсхолдер вместо TODO-тела
+# функции, а не лишний оператор.
+ignore = ["PIE790"]
+
+[tool.ruff.lint.per-file-ignores]
+# Сюда добавляем шаблоны заданий «почините код ассистента»: в них намеренно лежит
+# код с ошибками, это часть условия.
+"hw1-numpy/task9.py" = ["PLW0177"]

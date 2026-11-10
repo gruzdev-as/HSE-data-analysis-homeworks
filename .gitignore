@@ -1,0 +1,35 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Ну а вы как думали
+.claude/
+CLAUDE.md
+
+# Референсные решения и генераторы данных
+solutions/
+
+# Результаты прогонов тестов
+results*.xml
+scores/
+
+# Секретики!
+.env
+_private
+hw*-tests
+hidden_tests
