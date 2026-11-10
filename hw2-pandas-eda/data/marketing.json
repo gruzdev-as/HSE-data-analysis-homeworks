@@ -1,0 +1,435 @@
+[
+ {
+  "week": "2010-03-01",
+  "spend": {
+   "email": 102.32,
+   "search": 594.44,
+   "social": 393.78
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-03-08",
+  "spend": {
+   "email": 159.28,
+   "social": 313.14
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-03-15",
+  "spend": {
+   "email": 97.3,
+   "social": 464.84
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-03-22",
+  "spend": {
+   "email": 159.39,
+   "social": 506.67
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-03-29",
+  "spend": {
+   "email": 192.68,
+   "search": 1974.04,
+   "social": 382.46
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-04-05",
+  "spend": {
+   "search": 1056.41,
+   "social": 476.38
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-04-12",
+  "spend": {
+   "email": 175.76,
+   "search": 1286.79,
+   "social": 538.54
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-04-19",
+  "spend": {
+   "email": 187.09,
+   "search": 960.29,
+   "social": 288.02
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-04-26",
+  "spend": {
+   "email": 127.0,
+   "search": 1122.68,
+   "social": 548.19
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-05-03",
+  "spend": {
+   "email": 173.96,
+   "search": 1043.82,
+   "social": 305.77
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-05-10",
+  "spend": {
+   "email": 213.8,
+   "search": 1385.17,
+   "social": 446.7
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-05-17",
+  "spend": {
+   "email": 75.03,
+   "search": 1101.87,
+   "social": 274.68
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-05-24",
+  "spend": {
+   "email": 124.56,
+   "search": 1283.08,
+   "social": 384.67
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-05-31",
+  "spend": {
+   "email": 97.95,
+   "search": 1049.08,
+   "social": 543.82
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-06-07",
+  "spend": {
+   "email": 112.31,
+   "search": 994.45
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-06-14",
+  "spend": {
+   "email": 124.01,
+   "search": 634.4,
+   "social": 492.91
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-06-21",
+  "spend": {
+   "email": 70.44,
+   "search": 813.23,
+   "social": 529.56
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-06-28",
+  "spend": {
+   "search": 857.05,
+   "social": 301.71
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-07-05",
+  "spend": {
+   "email": 107.26,
+   "search": 318.04,
+   "social": 507.81
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-07-12",
+  "spend": {
+   "email": 189.67,
+   "search": 889.85,
+   "social": 312.12
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-07-19",
+  "spend": {
+   "email": 144.33,
+   "search": 963.15,
+   "social": 469.55
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-07-26",
+  "spend": {
+   "email": 150.73,
+   "search": 1027.06
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-08-02",
+  "spend": {
+   "search": 797.86,
+   "social": 334.77
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-08-16",
+  "spend": {
+   "email": 115.89,
+   "search": 1419.49,
+   "social": 477.24
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-08-23",
+  "spend": {
+   "email": 138.2,
+   "search": 1337.24,
+   "social": 542.71
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-08-30",
+  "spend": {
+   "email": 203.69,
+   "search": 811.51,
+   "social": 355.42
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-09-06",
+  "spend": {
+   "email": 160.03,
+   "search": 1162.76,
+   "social": 389.41
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-09-13",
+  "spend": {
+   "email": 66.9,
+   "search": 758.01,
+   "social": 246.89
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-09-20",
+  "spend": {
+   "email": 143.26,
+   "search": 760.48,
+   "social": 325.61
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-09-27",
+  "spend": {
+   "email": 151.97,
+   "search": 1062.14,
+   "social": 243.43
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-10-04",
+  "spend": {
+   "email": 135.0,
+   "search": 644.05,
+   "social": 439.63
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-10-11",
+  "spend": {
+   "email": 174.03,
+   "social": 873.87
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-10-18",
+  "spend": {
+   "search": 1052.45,
+   "social": 321.52
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-10-25",
+  "spend": {
+   "email": 168.8,
+   "search": 703.71,
+   "social": 448.56
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-11-01",
+  "spend": {
+   "email": 150.29,
+   "search": 1450.71,
+   "social": 536.57
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-11-08",
+  "spend": {
+   "email": 155.53,
+   "social": 271.01
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-11-22",
+  "spend": {
+   "email": 128.93,
+   "search": 959.34,
+   "social": 495.85
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-11-29",
+  "spend": {
+   "email": 227.75,
+   "search": 682.72,
+   "social": 297.2
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-12-06",
+  "spend": {
+   "email": 185.88,
+   "search": 731.23,
+   "social": 317.7
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-12-13",
+  "spend": {
+   "email": 123.25,
+   "search": 1178.6,
+   "social": 312.8
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2010-12-20",
+  "spend": {
+   "email": 158.01,
+   "search": 621.41,
+   "social": 516.1
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2010-12-27",
+  "spend": {
+   "email": 179.52,
+   "search": 921.65,
+   "social": 720.64
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2011-01-03",
+  "spend": {
+   "email": 190.46,
+   "search": 545.2
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2011-01-10",
+  "spend": {
+   "search": 932.92,
+   "social": 442.11
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2011-01-17",
+  "spend": {
+   "email": 281.42,
+   "social": 562.78
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2011-01-24",
+  "spend": {
+   "email": 111.65,
+   "search": 1190.0
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2011-01-31",
+  "spend": {
+   "search": 997.48,
+   "social": 429.91
+  },
+  "manager": "Bob"
+ },
+ {
+  "week": "2011-02-07",
+  "spend": {
+   "email": 151.23,
+   "social": 505.23
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2011-02-14",
+  "spend": {
+   "email": 98.66,
+   "search": 1298.03,
+   "social": 585.3
+  },
+  "manager": "Ann"
+ },
+ {
+  "week": "2011-02-21",
+  "spend": {
+   "email": 102.52,
+   "search": 934.96,
+   "social": 446.51
+  },
+  "manager": "Ann"
+ }
+]
