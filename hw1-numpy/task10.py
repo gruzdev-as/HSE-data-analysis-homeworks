@@ -1,33 +1,30 @@
 """
-Задание 10*. Сжатие картинки через SVD.
+Задание 10*. Симуляция воронки.
 
-Вы пишете функции, которые сжимают картинку: вместо всех пикселей хранят только
-k главных компонент SVD. Работаете с img - чёрно-белой картинкой, форма
-(height, width), dtype uint8, значения яркости 0..255.
+Маркетинг хочет понять, насколько может «гулять» конверсия рекламной кампании.
+Вы отвечаете симуляцией. Модель кампании: рекламу показали n_impressions раз,
+каждый показ даёт клик с вероятностью p_click, каждый клик даёт покупку
+с вероятностью p_buy.
 """
 
 import numpy as np
 
 
-def compress_image(img: np.ndarray, k: int) -> np.ndarray:
+def simulate_funnel(n_impressions: int, p_click: float, p_buy: float, n_sims: int, seed: int) -> np.ndarray:
     """
-    Сожмите картинку: постройте её приближение ранга k через SVD (оставьте
-    k наибольших сингулярных чисел). Верните картинку той же формы с dtype uint8:
-    значения округлите до целых, они должны лежать в 0..255.
-    Если k больше min(height, width), используйте min(height, width).
+    Смоделируйте n_sims независимых рекламных кампаний. Верните массив формы
+    (n_sims, 3): столбцы - показы, клики, покупки. Случайные числа берите
+    из генератора с seed: при одинаковом seed результат должен быть одинаковым.
     """
     # TODO: ваш код здесь
     ...
 
 
-def compression_ratio(shape: tuple[int, int], k: int) -> float:
+def conversion_interval(funnel: np.ndarray, level: float) -> tuple[float, float]:
     """
-    Посчитайте, во сколько раз меньше чисел нужно хранить для приближения ранга k,
-    чем для исходной картинки: h * w / (k * (h + w + 1)). Ограничьте k так же,
-    как в compress_image.
-
-    Пример:
-        compression_ratio((100, 200), 10) -> 6.633...
+    funnel - результат simulate_funnel. Посчитайте конверсию из показа в покупку
+    в каждой симуляции и верните интервал (low, high), в который попадает доля level
+    симуляций: квантили (1 - level) / 2 и (1 + level) / 2.
     """
     # TODO: ваш код здесь
     ...
@@ -35,19 +32,6 @@ def compression_ratio(shape: tuple[int, int], k: int) -> float:
 
 if __name__ == "__main__":
     # Готовый код запуска - менять не нужно.
-    from pathlib import Path
-
-    DATA = Path(__file__).parent / "data"
-    import matplotlib.pyplot as plt
-
-    img = np.load(DATA / "image.npy")
-    ks = [5, 20, 50]
-    fig, axes = plt.subplots(1, len(ks) + 1, figsize=(16, 4))
-    axes[0].imshow(img, cmap="gray", vmin=0, vmax=255)
-    axes[0].set_title("Оригинал")
-    for ax, k in zip(axes[1:], ks):
-        ax.imshow(compress_image(img, k), cmap="gray", vmin=0, vmax=255)
-        ax.set_title(f"k={k}, сжатие в {compression_ratio(img.shape, k):.1f} раз")
-    for ax in axes:
-        ax.axis("off")
-    plt.show()
+    funnel = simulate_funnel(n_impressions=10_000, p_click=0.03, p_buy=0.1, n_sims=5_000, seed=1)
+    print("Первые 3 симуляции:\n", funnel[:3])
+    print("90%-интервал конверсии:", conversion_interval(funnel, 0.9))

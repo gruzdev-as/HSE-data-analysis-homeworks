@@ -1,8 +1,7 @@
 import numpy as np
-from task6 import basket_totals
+from task6 import similarities
 
 
-def test_basket_totals_no_discount():
-    baskets = np.array([[1, 0, 2], [0, 3, 0]])
-    prices = np.array([10.0, 20.0, 5.0])
-    assert np.allclose(basket_totals(baskets, prices, np.zeros(3)), [20, 60])
+def test_similarities_basic():
+    ratings = np.array([[1, 0], [2, 0], [0, 3]])
+    assert np.allclose(similarities(ratings, 0), [1.0, 1.0, 0.0])

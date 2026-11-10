@@ -1,6 +1,10 @@
 import numpy as np
-from task9 import count_in_range
+import pytest
+from task9 import compress_image
 
 
-def test_count_in_range_inside():
-    assert count_in_range(np.array([1, 5, 7, 20]), 2, 10) == 2
+@pytest.mark.bonus
+def test_compress_image_shape_dtype():
+    img = np.full((20, 30), 100, dtype=np.uint8)
+    result = compress_image(img, 3)
+    assert result.shape == (20, 30) and result.dtype == np.uint8

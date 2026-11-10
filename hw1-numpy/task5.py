@@ -1,43 +1,62 @@
 """
-Задание 5. Ближайший пункт выдачи.
+Задание 5. Сегментация клиентов.
 
-Магазин решает, какие пункты выдачи оставить. Вы пишете функции, которые
-закрепляют клиентов за ближайшими пунктами. Работаете с координатами на карте:
-- customers - клиенты, форма (n, 2): строка - координаты (x, y) одного клиента;
-- points - пункты выдачи, форма (m, 2): строка - координаты одного пункта.
+Маркетинг описал сегменты клиентов через «типичного представителя» каждого
+сегмента. Вы пишете функции, которые относят каждого клиента к ближайшему
+сегменту и описывают получившиеся сегменты. Работаете с матрицами:
+- X - признаки клиентов, форма (n_clients, n_features), целые числа: строка - клиент,
+  столбец - признак (возраст, число визитов, средний чек и т.д.);
+- centers - типичные представители сегментов в тех же признаках и единицах,
+  форма (n_segments, n_features).
+Исходные массивы менять нельзя.
 """
 
 import numpy as np
 
 
-def distance_matrix(customers: np.ndarray, points: np.ndarray) -> np.ndarray:
+def scale_features(X: np.ndarray, method: str, reference: np.ndarray | None = None) -> np.ndarray:
     """
-    Посчитайте евклидово расстояние от каждого клиента до каждого пункта.
-    Верните матрицу формы (n, m): элемент [i, j] - расстояние от клиента i до пункта j.
+    Приведите признаки к одному масштабу, каждый столбец отдельно:
+        method="minmax": (x - min) / (max - min);
+        method="zscore": (x - mean) / std, std с ddof=0.
+    min, max, mean и std берите по столбцам reference, а если reference не передан -
+    по столбцам самого X. Если столбец reference постоянный, значения этого
+    столбца в результате - нули. При другом method вызовите ValueError.
+    Верните float-массив той же формы, что X.
 
     Пример:
-        distance_matrix(np.array([[0, 0]]), np.array([[3, 4], [0, 1]])) -> [[5.0, 1.0]]
+        scale_features(np.array([[1, 5], [3, 5]]), "minmax") -> [[0.0, 0.0], [1.0, 0.0]]
+        scale_features(np.array([[2, 5]]), "minmax", np.array([[1, 5], [3, 5]])) -> [[0.5, 0.0]]
     """
     # TODO: ваш код здесь
     ...
 
 
-def nearest_point(customers: np.ndarray, points: np.ndarray) -> np.ndarray:
+def assign_segments(X: np.ndarray, centers: np.ndarray, method: str) -> np.ndarray:
     """
-    Для каждого клиента найдите ближайший пункт. Верните индексы пунктов,
-    форма (n,). При равенстве расстояний верните меньший индекс.
+    Отнесите каждого клиента к ближайшему сегменту. Сначала отмасштабируйте признаки
+    клиентов и центров через scale_features с методом method; статистики для обоих
+    массивов считайте по клиентам X. Затем для каждого клиента найдите центр
+    с наименьшим евклидовым расстоянием в отмасштабированных признаках.
+    Верните номера сегментов, форма (n_clients,). При равенстве - меньший номер.
     """
     # TODO: ваш код здесь
     ...
 
 
-def point_load(customers: np.ndarray, points: np.ndarray) -> np.ndarray:
+def segment_summary(X: np.ndarray, labels: np.ndarray, n_segments: int) -> dict:
     """
-    Посчитайте, для скольких клиентов каждый пункт - ближайший.
-    Верните массив формы (m,).
+    labels - номера сегментов клиентов (результат assign_segments), сегменты
+    нумеруются от 0 до n_segments - 1. Опишите сегменты. Верните словарь:
+        "size" - число клиентов в каждом сегменте, форма (n_segments,);
+        "share" - доля клиентов в каждом сегменте, форма (n_segments,);
+        "profile" - средние значения признаков X по клиентам сегмента (в исходных
+            единицах), форма (n_segments, n_features); для пустого сегмента -
+            строка из np.nan.
 
     Пример:
-        point_load(np.array([[0, 0], [1, 0]]), np.array([[0, 0], [9, 9]])) -> [2, 0]
+        segment_summary(np.array([[10], [20], [60]]), np.array([0, 0, 2]), 3)
+        -> {"size": [2, 0, 1], "share": [0.667, 0.0, 0.333], "profile": [[15.0], [nan], [60.0]]}
     """
     # TODO: ваш код здесь
     ...
@@ -45,9 +64,14 @@ def point_load(customers: np.ndarray, points: np.ndarray) -> np.ndarray:
 
 if __name__ == "__main__":
     # Готовый код запуска - менять не нужно.
-    rng = np.random.default_rng(0)
-    customers = rng.uniform(0, 10, size=(8, 2))
-    points = np.array([[2.0, 2.0], [8.0, 3.0], [5.0, 8.0], [20.0, 20.0]])
-    print("Расстояния:\n", distance_matrix(customers, points).round(2))
-    print("Ближайшие пункты:", nearest_point(customers, points))
-    print("Загрузка пунктов:", point_load(customers, points))
+    from pathlib import Path
+
+    DATA = Path(__file__).parent / "data"
+    X = np.loadtxt(DATA / "features.csv", delimiter=",", skiprows=1, dtype=int)
+    centers = np.loadtxt(DATA / "segments.csv", delimiter=",", skiprows=1, dtype=int)
+    print("Z-score, первые 3 клиента:\n", scale_features(X, "zscore")[:3].round(3))
+    for method in ("zscore", "minmax"):
+        labels = assign_segments(X, centers, method)
+        summary = segment_summary(X, labels, len(centers))
+        print(method, "- размеры сегментов:", summary["size"])
+        print("Профили:\n", summary["profile"].round(1))

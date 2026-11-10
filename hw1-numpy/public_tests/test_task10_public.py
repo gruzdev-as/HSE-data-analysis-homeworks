@@ -1,10 +1,7 @@
-import numpy as np
 import pytest
-from task10 import compress_image
+from task10 import simulate_funnel
 
 
 @pytest.mark.bonus
-def test_compress_image_shape_dtype():
-    img = np.full((20, 30), 100, dtype=np.uint8)
-    result = compress_image(img, 3)
-    assert result.shape == (20, 30) and result.dtype == np.uint8
+def test_simulate_funnel_shape():
+    assert simulate_funnel(n_impressions=1000, p_click=0.1, p_buy=0.2, n_sims=50, seed=0).shape == (50, 3)

@@ -1,34 +1,55 @@
 """
-Задание 7. Нормализация признаков.
+Задание 7. Выполним ли план.
 
-Перед сегментацией клиентов признаки нужно привести к одному масштабу: иначе
-возраст в годах и средний чек в рублях несравнимы. Вы пишете функции
-нормализации. Работаете с матрицей X - признаками клиентов, форма
-(n_clients, n_features), целые числа: строка - клиент, столбец - признак.
-Каждый признак (столбец) нормализуйте отдельно. Исходный массив менять нельзя.
+Руководитель спрашивает, с какой вероятностью магазин выполнит месячный план.
+Вы отвечаете симуляцией: много раз разыгрываете случайный месяц и смотрите,
+как часто выручка дотягивает до плана.
+
+Модель месяца: каждый из n_days дней магазин посещают visitors человек, каждый
+покупает с вероятностью conversion. Сумма каждой покупки случайна:
+экспоненциальное распределение со средним mean_check.
 """
 
 import numpy as np
 
 
-def minmax_scale(X: np.ndarray) -> np.ndarray:
+def simulate_month_revenue(
+    n_sims: int, n_days: int, visitors: int, conversion: float, mean_check: float, seed: int
+) -> np.ndarray:
     """
-    Сделайте min-max нормализацию: (x - min) / (max - min) для каждого столбца.
-    Если столбец постоянный, замените его значения нулями. Верните float-массив
-    той же формы.
-
-    Пример:
-        minmax_scale(np.array([[1, 5], [3, 5]])) -> [[0.0, 0.0], [1.0, 0.0]]
+    Смоделируйте n_sims независимых месяцев и посчитайте выручку каждого.
+    Верните массив формы (n_sims,). Случайные числа берите из генератора с seed:
+    при одинаковом seed результат должен быть одинаковым.
     """
     # TODO: ваш код здесь
     ...
 
 
-def zscore(X: np.ndarray) -> np.ndarray:
+def prob_reach_target(revenues: np.ndarray, target: float) -> float:
     """
-    Сделайте z-нормализацию: (x - mean) / std для каждого столбца, std с ddof=0.
-    Если столбец постоянный, замените его значения нулями. Верните float-массив
-    той же формы.
+    Посчитайте долю симуляций, в которых выручка не меньше target.
+    """
+    # TODO: ваш код здесь
+    ...
+
+
+def min_conversion(
+    target: float,
+    prob: float,
+    grid: np.ndarray,
+    n_sims: int,
+    n_days: int,
+    visitors: int,
+    mean_check: float,
+    seed: int,
+) -> float:
+    """
+    Маркетинг может поднять конверсию и спрашивает, до какого уровня. Найдите
+    минимальную конверсию из grid, при которой вероятность выполнить план target
+    не меньше prob. grid - возрастающий массив конверсий. Для каждой конверсии
+    моделируйте выручку функцией simulate_month_revenue с переданными n_sims,
+    n_days, visitors, mean_check и seed. Если ни одна конверсия из grid не подходит,
+    верните np.nan.
     """
     # TODO: ваш код здесь
     ...
@@ -36,9 +57,11 @@ def zscore(X: np.ndarray) -> np.ndarray:
 
 if __name__ == "__main__":
     # Готовый код запуска - менять не нужно.
-    from pathlib import Path
-
-    DATA = Path(__file__).parent / "data"
-    X = np.loadtxt(DATA / "features.csv", delimiter=",", skiprows=1, dtype=int)
-    print("Min-max, первые 3 строки:\n", minmax_scale(X)[:3].round(3))
-    print("Z-score, первые 3 строки:\n", zscore(X)[:3].round(3))
+    revenues = simulate_month_revenue(n_sims=10_000, n_days=30, visitors=200, conversion=0.05, mean_check=1500, seed=42)
+    print("Средняя выручка:", revenues.mean())
+    print("Вероятность выполнить план 450 000:", prob_reach_target(revenues, 450_000))
+    grid = np.round(np.linspace(0.04, 0.08, 9), 3)
+    print(
+        "Нужная конверсия для плана 450 000 с вероятностью 90%:",
+        min_conversion(450_000, 0.9, grid, n_sims=2_000, n_days=30, visitors=200, mean_check=1500, seed=42),
+    )

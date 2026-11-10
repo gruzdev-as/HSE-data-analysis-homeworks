@@ -44,6 +44,20 @@ def zero_sales_days(sales: np.ndarray) -> int:
     ...
 
 
+def order_totals(orders: np.ndarray, prices: np.ndarray, discounts: np.ndarray) -> np.ndarray:
+    """
+    Посчитайте сумму каждого заказа с учётом скидок.
+    orders - заказы в штуках, форма (n_orders, n_products): orders[k, i] - сколько
+    штук товара i в заказе k. discounts - скидки на товары в долях от 0 до 1,
+    форма (n_products,). Верните массив формы (n_orders,).
+
+    Пример:
+        order_totals(np.array([[1, 2]]), np.array([100, 10]), np.array([0.5, 0])) -> [70.0]
+    """
+    # TODO: ваш код здесь
+    ...
+
+
 if __name__ == "__main__":
     # Готовый код запуска - менять не нужно.
     from pathlib import Path
@@ -55,3 +69,6 @@ if __name__ == "__main__":
     print("Выручка по дням, первые 7:", daily_revenue(sales, prices)[:7])
     print("Лучший товар:", best_product(sales, prices))
     print("Дней без продаж:", zero_sales_days(sales))
+    orders = np.loadtxt(DATA / "orders.csv", delimiter=",", dtype=int)
+    discounts = np.loadtxt(DATA / "discounts.csv")
+    print("Суммы первых 5 заказов:", order_totals(orders, prices, discounts)[:5])
