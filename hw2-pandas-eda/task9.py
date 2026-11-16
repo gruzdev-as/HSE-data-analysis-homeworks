@@ -1,57 +1,25 @@
 """
-Задание 9. Почините код ассистента.
+Задание 9*. Курс последнего рабочего дня.
 
-ИИ-ассистент написал функции для отчёта по чистым продажам sales (столбцы как в задании 6).
-Описания функций (докстринги) верные, а в коде есть ошибки. Найдите и исправьте их, не меняя
-сигнатуры и описания. В функции может быть больше одной ошибки.
+Банк публикует курсы только по рабочим дням (data/fx_rates_business.csv, столбцы как в
+задании 4: date, currency, units_per_gbp), а магазин продаёт и в выходные. Работаете с
+выгрузкой orders (столбцы - как в задании 1).
 """
 
 import pandas as pd
 
 
-def fill_unknown_country(sales: pd.DataFrame) -> pd.DataFrame:
+def to_gbp_asof(orders: pd.DataFrame, fx_rates: pd.DataFrame) -> pd.DataFrame:
     """
-    Возвращает копию sales, в которой пропуски в country заменены на "Unspecified".
-    Исходный DataFrame не меняется.
-    """
-    result = sales
-    result["country"].fillna("Unspecified", inplace=True)
-    return result
+    Переведите цены в фунты по последнему опубликованному курсу на дату счёта (в тот же день
+    или раньше). Если такого курса нет - NaN. GBP не пересчитывается. Верните копию orders с
+    новым столбцом price_gbp, число и порядок строк - как в orders, индекс тот же.
 
-
-def count_buyers(sales: pd.DataFrame) -> int:
+    Пример: курс EUR опубликован в пятницу 2010-07-02 (1.2), счёт в воскресенье 2010-07-04 на
+    12.0 EUR -> price_gbp 10.0.
     """
-    Возвращает число разных клиентов. Гостевые продажи (без customer_id) не учитываются.
-    """
-    return int(sales["customer_id"].count())
-
-
-def big_orders(sales: pd.DataFrame, min_total: float) -> list[str]:
-    """
-    Возвращает номера счетов, сумма которых (сумма quantity * price по всем строкам счёта)
-    не меньше min_total. Список строк по возрастанию.
-    """
-    big = sales[sales["quantity"] * sales["price"] > min_total]
-    return list(big["invoice"].unique())
-
-
-def monthly_revenue(sales: pd.DataFrame) -> pd.Series:
-    """
-    Возвращает выручку по месяцам: индекс - месяц строкой "ГГГГ-ММ" по порядку, значения - выручка.
-    """
-    sales = sales.assign(revenue=sales["quantity"] * sales["price"])
-    revenue = sales.groupby(sales["invoice_date"].dt.month)["revenue"].sum()
-    revenue.index = [f"{sales['invoice_date'].dt.year.min()}-{m:02d}" for m in revenue.index]
-    return revenue
-
-
-def add_email(sales: pd.DataFrame, customers: pd.DataFrame) -> pd.DataFrame:
-    """
-    Возвращает sales с добавленным столбцом email из справочника customers (у одного клиента
-    может быть несколько строк в справочнике, email в них одинаковый). Число и порядок строк -
-    как в sales; у гостевых продаж и клиентов не из справочника email пустой.
-    """
-    return sales.merge(customers[["customer_id", "email"]], on="customer_id")
+    # TODO: ваш код здесь
+    ...
 
 
 if __name__ == "__main__":
@@ -59,14 +27,12 @@ if __name__ == "__main__":
     from pathlib import Path
 
     DATA = Path(__file__).parent / "data"
-    sales = pd.read_csv(
-        DATA / "sales.csv",
+    orders = pd.read_csv(
+        DATA / "orders_iso.csv",
         dtype={"invoice": "str", "stock_code": "str", "customer_id": "Int64"},
-        parse_dates=["invoice_date"],
+        parse_dates=["invoice_date", "loaded_at"],
     )
-    customers = pd.read_csv(DATA / "customers.csv", parse_dates=["signup_date", "updated_at"])
-    print("Пропусков в country после замены:", fill_unknown_country(sales)["country"].isna().sum())
-    print("Клиентов:", count_buyers(sales))
-    print("Счетов от 1000 фунтов:", len(big_orders(sales, 1000)))
-    print(monthly_revenue(sales))
-    print("Строк до и после добавления email:", len(sales), len(add_email(sales, customers)))
+    fx_rates = pd.read_csv(DATA / "fx_rates_business.csv", parse_dates=["date"])
+    converted = to_gbp_asof(orders, fx_rates)
+    weekend = converted["invoice_date"].dt.day_of_week >= 5
+    print(converted[weekend & (converted["currency"] != "GBP")][["invoice", "price", "currency", "price_gbp"]].head())

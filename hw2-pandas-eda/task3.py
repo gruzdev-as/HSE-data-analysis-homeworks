@@ -1,42 +1,45 @@
 """
-Задание 3. Чистка: дубли выгрузки, тестовые аккаунты, отмены.
+Задание 3. Группировки.
 
-Работаете с выгрузкой orders в виде, как её возвращает load_orders из задания 1, и
-справочником клиентов customers (data/customers.csv): customer_id, email, segment,
-signup_date, updated_at. Функции не должны менять переданные DataFrame.
+Работаете с чистыми продажами sales (пример - data/sales.csv): дубли, тестовые аккаунты и
+отмены уже удалены, цены переведены в фунты, страны приведены к единому виду. Столбцы:
+invoice, stock_code, description, quantity, invoice_date (datetime64), price (фунты),
+customer_id (Int64, пусто у гостей), country. Выручка строки - quantity * price.
+Товар определяется кодом stock_code.
 """
 
 import pandas as pd
 
-TEST_DOMAIN = "test.retail.co.uk"
 
-
-def drop_export_duplicates(orders: pd.DataFrame) -> pd.DataFrame:
+def revenue_by_country(sales: pd.DataFrame) -> pd.Series:
     """
-    Иногда учётная система выгружает одну и ту же строку счёта повторно (следующей ночью).
-    Дубль выгрузки - строка с теми же invoice и line_no, что у одной из строк выше.
-    Удалите дубли, оставив для каждой пары (invoice, line_no) первую по порядку строку.
-    Порядок оставшихся строк не меняйте.
+    Посчитайте выручку по странам. Верните Series: индекс - страна, значения - выручка,
+    по убыванию, при равенстве - по алфавиту.
+
+    Пример: France - строки на 10 и 5, Spain - на 20 -> Spain 20, France 15.
     """
     # TODO: ваш код здесь
     ...
 
 
-def remove_test_accounts(orders: pd.DataFrame, customers: pd.DataFrame) -> pd.DataFrame:
+def top_products(sales: pd.DataFrame, n: int) -> pd.Series:
     """
-    Тестовые аккаунты - клиенты, у которых email на домене test.retail.co.uk (TEST_DOMAIN).
-    Удалите из orders строки тестовых аккаунтов, остальные строки верните без изменений
-    и в том же порядке.
+    Найдите n товаров с наибольшей выручкой. Верните Series: индекс - stock_code, значения -
+    выручка, по убыванию выручки, при равенстве - по возрастанию stock_code. Если товаров
+    меньше n - верните все.
+
+    Пример: товар "A" продан на 50, "B" на 120, "C" на 60 -> top_products(sales, 2) -> B 120, C 60.
     """
     # TODO: ваш код здесь
     ...
 
 
-def split_cancellations(orders: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+def average_order_value(sales: pd.DataFrame) -> pd.Series:
     """
-    Разделите строки на обычные и отмены. Отмена - строка, номер счёта которой начинается
-    с буквы C. Верните пару (обычные строки, отмены), порядок строк внутри каждой части -
-    как в orders.
+    Посчитайте средний чек по странам: средняя сумма одного счёта. Верните Series: индекс -
+    страна (по алфавиту), значения - средний чек.
+
+    Пример: в Spain два счёта на 100 и 300 -> Spain 200.
     """
     # TODO: ваш код здесь
     ...
@@ -46,14 +49,11 @@ if __name__ == "__main__":
     # Готовый код запуска - менять не нужно.
     from pathlib import Path
 
-    from task1 import load_orders
-
-    DATA = Path(__file__).parent / "data"
-    orders = load_orders(DATA / "orders.csv")
-    customers = pd.read_csv(DATA / "customers.csv")
-    deduped = drop_export_duplicates(orders)
-    print("Строк до и после удаления дублей:", len(orders), len(deduped))
-    real = remove_test_accounts(deduped, customers)
-    print("Строк без тестовых аккаунтов:", len(real))
-    sales, cancellations = split_cancellations(real)
-    print("Обычных строк:", len(sales), "отмен:", len(cancellations))
+    sales = pd.read_csv(
+        Path(__file__).parent / "data" / "sales.csv",
+        dtype={"invoice": "str", "stock_code": "str", "customer_id": "Int64"},
+        parse_dates=["invoice_date"],
+    )
+    print(revenue_by_country(sales).head())
+    print(top_products(sales, 5))
+    print(average_order_value(sales).head())

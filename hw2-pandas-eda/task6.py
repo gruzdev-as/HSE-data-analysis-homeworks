@@ -1,38 +1,41 @@
 """
-Задание 6. Выручка по странам и месяцам.
+Задание 6. Сегменты клиентов.
 
-Работаете с чистыми продажами sales (пример - data/sales.csv): дубли, тестовые аккаунты и
-отмены уже удалены, цены переведены в фунты, страны приведены к единому виду. Столбцы:
-invoice, stock_code, description, quantity, invoice_date (datetime64), price (фунты),
-customer_id (Int64, пусто у гостей), country. Выручка строки - quantity * price.
+Работаете с чистыми продажами sales (столбцы - как в задании 3) и справочником клиентов
+customers (data/customers.csv): customer_id, email, segment, signup_date, updated_at (datetime64).
+Когда профиль клиента меняется, в справочник дописывается новая строка с тем же customer_id,
+актуальна строка с самым поздним updated_at. Порядок строк в справочнике произвольный.
 """
 
 import pandas as pd
 
 
-def revenue_by_country(sales: pd.DataFrame) -> pd.Series:
+def latest_profiles(customers: pd.DataFrame) -> pd.DataFrame:
     """
-    Посчитайте выручку по странам. Верните Series: индекс - страна, значения - выручка,
-    по убыванию, при равенстве - по алфавиту.
+    Оставьте для каждого клиента одну, актуальную строку. Верните DataFrame с теми же
+    столбцами, по возрастанию customer_id, индекс 0, 1, 2, ...
+
+    Пример: у клиента 5 строки с segment "retail" (updated_at 2010-01-10) и "vip"
+    (updated_at 2010-06-01) -> остаётся строка "vip".
     """
     # TODO: ваш код здесь
     ...
 
 
-def monthly_pivot(sales: pd.DataFrame) -> pd.DataFrame:
+def segment_report(sales: pd.DataFrame, customers: pd.DataFrame) -> pd.DataFrame:
     """
-    Постройте таблицу выручки «страна × месяц»: строки - страны по алфавиту, столбцы - месяцы
-    в виде строк "ГГГГ-ММ" по порядку, от первого до последнего месяца в sales без пропусков.
-    Если в стране в каком-то месяце продаж не было, поставьте 0.
-    """
-    # TODO: ваш код здесь
-    ...
+    Соберите отчёт по актуальным сегментам клиентов (как в latest_profiles). Продажи без
+    customer_id отнесите к сегменту "guest", продажи клиентов, которых нет в справочнике, -
+    к "unknown". Верните DataFrame: индекс - сегмент, строки по убыванию выручки, при
+    равенстве - по алфавиту; столбцы:
+        "revenue" - выручка (quantity * price);
+        "share" - доля выручки сегмента в общей выручке (от 0 до 1);
+        "invoices" - число счетов;
+        "buyers" - число разных клиентов (у "guest" - 0);
+        "aov" - средний чек, средняя сумма одного счёта.
 
-
-def average_order_value(sales: pd.DataFrame) -> pd.Series:
-    """
-    Посчитайте средний чек по странам: средняя сумма одного счёта. Верните Series: индекс -
-    страна (по алфавиту), значения - средний чек.
+    Пример: клиент 1 (vip) - один счёт на 300, гость - счёт на 100 -> vip: revenue 300,
+    share 0.75, invoices 1, buyers 1, aov 300; guest: 100, 0.25, 1, 0, 100.
     """
     # TODO: ваш код здесь
     ...
@@ -42,11 +45,12 @@ if __name__ == "__main__":
     # Готовый код запуска - менять не нужно.
     from pathlib import Path
 
+    DATA = Path(__file__).parent / "data"
     sales = pd.read_csv(
-        Path(__file__).parent / "data" / "sales.csv",
+        DATA / "sales.csv",
         dtype={"invoice": "str", "stock_code": "str", "customer_id": "Int64"},
         parse_dates=["invoice_date"],
     )
-    print(revenue_by_country(sales).head())
-    print(monthly_pivot(sales).iloc[:5, :6])
-    print(average_order_value(sales).head())
+    customers = pd.read_csv(DATA / "customers.csv", parse_dates=["signup_date", "updated_at"])
+    print(latest_profiles(customers).head())
+    print(segment_report(sales, customers))

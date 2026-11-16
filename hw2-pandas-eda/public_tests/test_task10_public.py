@@ -1,11 +1,14 @@
-import pandas as pd
+import json
+
 import pytest
-from task10 import to_gbp_asof
+from task10 import load_marketing
 
 pytestmark = pytest.mark.bonus
 
 
-def test_to_gbp_asof_same_day():
-    orders = pd.DataFrame({"price": [2.4], "currency": ["EUR"], "invoice_date": pd.to_datetime(["2010-07-01 12:00"])})
-    fx = pd.DataFrame({"date": pd.to_datetime(["2010-07-01"]), "currency": ["EUR"], "units_per_gbp": [1.2]})
-    assert to_gbp_asof(orders, fx)["price_gbp"].iloc[0] == pytest.approx(2.0)
+def test_load_marketing_columns(tmp_path):
+    path = tmp_path / "marketing.json"
+    path.write_text(json.dumps([{"week": "2010-03-01", "spend": {"email": 10.0}, "manager": "Ann"}]))
+    result = load_marketing(path)
+    assert list(result.columns) == ["week", "channel", "spend"]
+    assert result["spend"].tolist() == [10.0]

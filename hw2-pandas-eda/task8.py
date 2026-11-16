@@ -1,64 +1,72 @@
 """
-Задание 8. Выручка во времени.
+Задание 8. Почините код ассистента.
 
-Работаете с чистыми продажами sales (как в задании 6). Выручка строки - quantity * price,
-день продажи - дата invoice_date без времени.
+ИИ-ассистент написал функции для отчёта по чистым продажам sales (столбцы как в задании 3).
+Описания функций (докстринги) верные, а в коде есть ошибки. Найдите и исправьте их, не меняя
+сигнатуры и описания. В функции может быть больше одной ошибки.
 """
 
 import pandas as pd
 
 
-def daily_revenue(sales: pd.DataFrame) -> pd.Series:
+def fill_unknown_country(sales: pd.DataFrame) -> pd.DataFrame:
     """
-    Посчитайте выручку за каждый календарный день от первого до последнего дня в sales.
-    Верните Series: индекс - даты (datetime64, без времени) по порядку, значения - выручка;
-    в дни без продаж - 0.
+    Возвращает копию sales, в которой пропуски в country заменены на "Unspecified".
+    Исходный DataFrame не меняется.
     """
-    # TODO: ваш код здесь
-    ...
+    result = sales
+    result["country"].fillna("Unspecified", inplace=True)
+    return result
 
 
-def weekly_revenue(sales: pd.DataFrame) -> pd.Series:
+def count_buyers(sales: pd.DataFrame) -> int:
     """
-    Посчитайте выручку по неделям. Неделя - с понедельника по воскресенье. Верните Series:
-    индекс - дата понедельника каждой недели по порядку, от первой до последней недели в sales;
-    значения - выручка за неделю, в неделях без продаж - 0. Первая и последняя недели могут
-    быть неполными - считайте их как есть.
+    Возвращает число разных клиентов. Гостевые продажи (без customer_id) не учитываются.
     """
-    # TODO: ваш код здесь
-    ...
+    return int(sales["customer_id"].count())
 
 
-def rolling_7d(sales: pd.DataFrame) -> pd.Series:
+def big_orders(sales: pd.DataFrame, min_total: float) -> list[str]:
     """
-    Посчитайте для каждого календарного дня (как в daily_revenue) выручку за последние 7 дней,
-    включая сам день. Для первых 6 дней, где 7 дней ещё не набралось, верните NaN.
-    Верните Series с тем же индексом, что у daily_revenue.
+    Возвращает номера счетов, сумма которых (сумма quantity * price по всем строкам счёта)
+    не меньше min_total. Список строк по возрастанию.
     """
-    # TODO: ваш код здесь
-    ...
+    big = sales[sales["quantity"] * sales["price"] > min_total]
+    return list(big["invoice"].unique())
 
 
-def week_over_week(sales: pd.DataFrame) -> pd.Series:
+def monthly_revenue(sales: pd.DataFrame) -> pd.Series:
     """
-    Посчитайте изменение недельной выручки (как в weekly_revenue) к предыдущей неделе в процентах:
-    100 * (эта неделя - прошлая) / прошлая. Для первой недели и для недели после недели с нулевой
-    выручкой верните NaN. Верните Series с тем же индексом, что у weekly_revenue.
+    Возвращает выручку по месяцам: индекс - месяц строкой "ГГГГ-ММ" по порядку, значения - выручка.
     """
-    # TODO: ваш код здесь
-    ...
+    sales = sales.assign(revenue=sales["quantity"] * sales["price"])
+    revenue = sales.groupby(sales["invoice_date"].dt.month)["revenue"].sum()
+    revenue.index = [f"{sales['invoice_date'].dt.year.min()}-{m:02d}" for m in revenue.index]
+    return revenue
+
+
+def add_email(sales: pd.DataFrame, customers: pd.DataFrame) -> pd.DataFrame:
+    """
+    Возвращает sales с добавленным столбцом email из справочника customers (у одного клиента
+    может быть несколько строк в справочнике, email в них одинаковый). Число и порядок строк -
+    как в sales; у гостевых продаж и клиентов не из справочника email пустой.
+    """
+    return sales.merge(customers[["customer_id", "email"]], on="customer_id")
 
 
 if __name__ == "__main__":
     # Готовый код запуска - менять не нужно.
     from pathlib import Path
 
+    DATA = Path(__file__).parent / "data"
     sales = pd.read_csv(
-        Path(__file__).parent / "data" / "sales.csv",
+        DATA / "sales.csv",
         dtype={"invoice": "str", "stock_code": "str", "customer_id": "Int64"},
         parse_dates=["invoice_date"],
     )
-    print(daily_revenue(sales).head(10))
-    print(weekly_revenue(sales).tail(12))
-    print(rolling_7d(sales).tail(10))
-    print(week_over_week(sales).tail(12))
+    customers = pd.read_csv(DATA / "customers.csv", parse_dates=["signup_date", "updated_at"])
+    print("Пропусков в country после замены:", fill_unknown_country(sales)["country"].isna().sum())
+    print("Клиентов:", count_buyers(sales))
+    print("Счетов от 1000 фунтов:", len(big_orders(sales, 1000)))
+    print(monthly_revenue(sales))
+    print("Строк до и после добавления email:", len(sales), len(add_email(sales, customers)))

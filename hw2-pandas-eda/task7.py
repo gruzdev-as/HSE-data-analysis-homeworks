@@ -1,29 +1,44 @@
 """
-Задание 7. Сегменты клиентов.
+Задание 7. Динамика выручки.
 
-Работаете с чистыми продажами sales (как в задании 6) и справочником клиентов customers
-(data/customers.csv): customer_id, email, segment, signup_date, updated_at (datetime64).
-Когда профиль клиента меняется, в справочник дописывается новая строка с тем же customer_id,
-актуальна строка с самым поздним updated_at. Порядок строк в справочнике произвольный.
+Работаете с чистыми продажами sales (столбцы - как в задании 3). Выручка строки -
+quantity * price, день продажи - дата invoice_date без времени. Неделя - с понедельника
+по воскресенье.
 """
 
 import pandas as pd
 
 
-def latest_profiles(customers: pd.DataFrame) -> pd.DataFrame:
+def daily_revenue(sales: pd.DataFrame) -> pd.Series:
     """
-    Оставьте для каждого клиента одну, актуальную строку. Верните DataFrame с теми же
-    столбцами, по возрастанию customer_id, индекс 0, 1, 2, ...
+    Посчитайте выручку за каждый календарный день от первого до последнего дня в sales.
+    Верните Series: индекс - даты (datetime64, без времени) по порядку, значения - выручка;
+    в дни без продаж - 0.
+
+    Пример: продажи 2010-05-03 на 20 и 2010-05-05 на 3 -> 2010-05-03: 20, 2010-05-04: 0,
+    2010-05-05: 3.
     """
     # TODO: ваш код здесь
     ...
 
 
-def revenue_by_segment(sales: pd.DataFrame, customers: pd.DataFrame) -> pd.Series:
+def weekly_report(sales: pd.DataFrame) -> dict:
     """
-    Посчитайте выручку по актуальным сегментам клиентов. Продажи без customer_id отнесите к
-    сегменту "guest", продажи клиентов, которых нет в справочнике, - к "unknown".
-    Верните Series: индекс - сегмент, значения - выручка, по убыванию.
+    Соберите отчёт о динамике. Верните словарь:
+        "weekly" - Series выручки по неделям: индекс - дата понедельника каждой недели по
+            порядку, от первой до последней недели в sales, в неделях без продаж - 0; первая
+            и последняя недели могут быть неполными - считайте их как есть;
+        "wow" - Series изменения недельной выручки к предыдущей неделе в процентах:
+            100 * (эта неделя - прошлая) / прошлая, индекс как у "weekly"; для первой недели
+            и для недели после недели с нулевой выручкой - NaN;
+        "rolling_7d" - Series: для каждого дня (как в daily_revenue) выручка за последние
+            7 календарных дней, включая сам день; для первых 6 дней - NaN;
+        "best_week" - понедельник недели с наибольшей выручкой (pd.Timestamp), при
+            равенстве - более ранний;
+        "zero_weeks" - список понедельников недель без продаж (pd.Timestamp) по порядку.
+
+    Пример: выручка по неделям с понедельников 2010-12-20, 2010-12-27, 2011-01-03 - 40, 0, 40 ->
+    "wow": NaN, -100, NaN; "best_week": 2010-12-20; "zero_weeks": [2010-12-27].
     """
     # TODO: ваш код здесь
     ...
@@ -33,12 +48,14 @@ if __name__ == "__main__":
     # Готовый код запуска - менять не нужно.
     from pathlib import Path
 
-    DATA = Path(__file__).parent / "data"
     sales = pd.read_csv(
-        DATA / "sales.csv",
+        Path(__file__).parent / "data" / "sales.csv",
         dtype={"invoice": "str", "stock_code": "str", "customer_id": "Int64"},
         parse_dates=["invoice_date"],
     )
-    customers = pd.read_csv(DATA / "customers.csv", parse_dates=["signup_date", "updated_at"])
-    print(latest_profiles(customers).head())
-    print(revenue_by_segment(sales, customers))
+    print(daily_revenue(sales).head(10))
+    report = weekly_report(sales)
+    print(report["weekly"].tail(12))
+    print(report["wow"].tail(12))
+    print(report["rolling_7d"].tail(10))
+    print("Лучшая неделя:", report["best_week"], "недели без продаж:", report["zero_weeks"])

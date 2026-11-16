@@ -1,7 +1,11 @@
 import pandas as pd
-from task9 import count_buyers
+import pytest
+from task9 import to_gbp_asof
+
+pytestmark = pytest.mark.bonus
 
 
-def test_count_buyers_no_repeats():
-    sales = pd.DataFrame({"customer_id": pd.array([1, 2, 3], dtype="Int64")})
-    assert count_buyers(sales) == 3
+def test_to_gbp_asof_same_day():
+    orders = pd.DataFrame({"price": [2.4], "currency": ["EUR"], "invoice_date": pd.to_datetime(["2010-07-01 12:00"])})
+    fx = pd.DataFrame({"date": pd.to_datetime(["2010-07-01"]), "currency": ["EUR"], "units_per_gbp": [1.2]})
+    assert to_gbp_asof(orders, fx)["price_gbp"].iloc[0] == pytest.approx(2.0)
